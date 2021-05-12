@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script src='gk.js'></script>
+<script>
+let body
+let desired
+gk.gl( _=> {
+	_.alignCenter = false
+	_.width = 600*3+30
+	_.height = 410
+	return () => {
+		body.run()
+		desired.join(body)
+		stop = 1
+	}
+}, ready => {
+	body = new Body
+	desired = new Desired(body)
+})
+class Body {
+	constructor() {
+		this.stark = []
+		this.width = 600
+		this.height = 400
+		this.count = 3
+		for (var i = 0; i < this.count; i++) {
+			this.stark[i] = { x: i * this.width + i * 5 + 5, y: 5 }
+		}
+	}
+	run() {
+		this.display()
+	}
+	display() {
+		chunk(() => {
+			hue(120, 50, 50, 50)
+			for (var i = 0; i < this.stark.length; i++) {
+				rect(this.stark[i].x, this.stark[i].y, this.width, this.height)
+			}
+		})
+	}
+}
+class Desired {
+	constructor(body) {
+		this.data = []
+		this.stark = []
+		this.init()
+		this.data.push({
+			width: 200,
+			height: 300,
+			count: 6
+		}, {
+			width: 100,
+			height: 100,
+			count: 11
+		}, {
+			width: 20,
+			height: 30,
+			count: 100
+		})
+	}
+	init() {
+		this.stark.data = []
+		for (var x = 0; x < width; x++) {
+			this.stark.data[x] = []
+			for (var y = 0; y < height; y++) {
+				this.stark.data[x][y] = 0
+			}
+		}
+	}
+	getLocation(x, y, w, h) {
+		let sum = 0
+		for (var i = x; i < x+w; i++) {
+			for (var j = y; j < y+h; j++) {
+				if ( this.stark.data[i][j] == 1 ) {
+					sum++
+					break
+				}
+			}
+			if ( sum > 0 ) break
+		}
+		return sum
+	}
+	setLocation(x, y, w, h) {
+		for (var i = x; i < x+w; i++) {
+			for (var j = y; j < y+h; j++) {
+				this.stark.data[i][j] = 1 
+			}
+		}
+	}
+	join(body) {
+		let self = this
+		function b(index) {
+			if ( index >= body.count ) return false
+			function show(x, y, w, h) {
+				for (var i = 0; i < self.data.length; i++) {
+					if ( self.data[i].width <= w && self.data[i].height <= h && self.data[i].count > 0 && !self.getLocation(x, y, self.data[i].width, self.data[i].height) ) {
+						self.data[i].count--
+						self.setLocation(x, y, self.data[i].width, self.data[i].height)
+						line({loop: 1, strip: 1, z: -1}, [x, y], [x+self.data[i].width, y], [ x+self.data[i].width,  y+self.data[i].height ], [x, y+self.data[i].height])
+						show(x+self.data[i].width, y, w-self.data[i].width, h)
+						show(x, y+self.data[i].height, w, h-self.data[i].height)
+					}
+				}
+			}
+			show(body.stark[index].x, body.stark[index].y, body.width, body.height)
+			index++
+			b(index)
+		}
+		b(0)
+	}
+}
+</script>
+</body>
+</html>

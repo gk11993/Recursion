@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script>
+
+test(9)
+
+
+function test(num) {
+	let incc = 0
+	while ( incc < num ) {
+		incc++
+
+		randon = Math.random
+		floor = Math.floor
+		let arr = [floor(randon()*1000), floor(randon()*1000), floor(randon()*1000)]
+		console.log(arr)
+		var newArr = []
+		let objectArr = []
+
+		for (var i = 0; i < arr.length; i++) {
+			objectArr.push( { leftNumber: getOneLeft(arr[i]), len: getLength(arr[i]), index: i } )
+		}
+
+		let time = new Date*1
+		do {
+			let current = { leftNumber: null, len: null, index: null }
+			for (let o of objectArr) {
+				allindex(current, o, 1, obj => current = obj )
+					
+			}
+
+			for (var i = objectArr.length-1; i >=0 ; i--) {
+				if ( objectArr[i].index == current.index ) {
+					objectArr.splice(i, 1)
+					break
+				}
+			}
+			newArr.push(current.index)
+		} while( objectArr.length > 0 ) 
+
+		let result1 = ''
+		for (var i = 0; i < newArr.length; i++) {
+			result1 += arr[newArr[i]]
+		}
+		console.log(newArr, result1, new Date*1 - time)
+
+		function allindex(current, o, index, fn) {
+			if ( current.leftNumber < o.leftNumber ) {
+				index = o.index
+				fn({ leftNumber: getOneLeft(arr[o.index]), len: getLength(arr[o.index]), index: o.index })
+				return false
+			} else if ( current.leftNumber == o.leftNumber  ) {
+				if ( current.len == 1 ) {
+					let objStr =`${arr[o.index]}`.substr(index, `${arr[o.index]}`.length-1)
+					if ( getOneLeft(objStr) > getOneLeft(arr[current.index]) ) {
+						fn({ leftNumber: getOneLeft(arr[o.index]), len: getLength(arr[o.index]), index: o.index })
+					} else {
+						fn({ leftNumber: getOneLeft(arr[current.index]), len: getLength(arr[current.index]), index: current.index })
+					}
+					return false
+				}
+				
+				if ( o.len == 1 ) {
+					let currentStr = `${arr[current.index]}`.substr(index, `${arr[current.index]}`.length-1)
+					if ( getOneLeft(currentStr) > getOneLeft(arr[o.index]) ) {
+						fn({ leftNumber: getOneLeft(arr[current.index]), len: getLength(arr[current.index]), index: current.index })
+					} else {
+						fn({ leftNumber: getOneLeft(arr[o.index]), len: getLength(arr[o.index]), index: o.index })
+					} 
+					return false
+				}
+				
+				let currentStr = `${arr[current.index]}`.substr(index, `${arr[current.index]}`.length-1)
+				let objStr =`${arr[o.index]}`.substr(index, `${arr[o.index]}`.length-1)
+				index++
+				allindex({ leftNumber: getOneLeft(currentStr), len: getLength(currentStr), index: current.index }, { leftNumber: getOneLeft(objStr), len: getLength(objStr), index: o.index }, index , fn)
+			}
+			
+		}
+
+		function getOneLeft(num) {
+			return ~~((`0.${num}`) * 10)
+		}
+		function getLength(num) {
+			return `${num}`.length
+		}
+
+
+		time = new Date*1
+		innerArr = []
+		new function () {
+			let index = -1
+			let itemArr = []
+			function show(index) {
+				if ( index >= arr.length-1 ) return 
+				index++
+				for (var i = 0; i < arr.length; i++) {
+					itemArr[index] = i
+					if ( index == arr.length-1 ) {
+						let innerArr = []
+						let found = false
+						for (var j = 0; j < itemArr.length; j++) {
+							for (var n = 0; n < innerArr.length; n++) {
+								if ( itemArr[j] == innerArr[n] ) {
+									found = true
+									break
+								}
+							}
+							if ( !found ) {
+								innerArr.push(itemArr[j])
+							} else {
+								break
+							}
+						}
+
+						if ( !found ) {
+							newArr.push(innerArr)
+						}
+						
+					}
+					show(index)
+
+				}
+			}
+			show(index)
+		}
+
+		let d = 0
+		let iarr = []
+		for (var i = 0; i < newArr.length; i++) {
+			let len = ""
+			let itemArr = []
+			for (var j = 0; j < newArr[i].length; j++) {
+				len += arr[newArr[i][j]]
+				itemArr.push(newArr[i][j])
+			}
+			
+			if ( d < len ) {
+				d = len
+				iarr = itemArr
+			}
+		}
+
+		let result = ''
+		for (var i = 0; i < iarr.length; i++) {
+			result += arr[iarr[i]]
+		}
+		console.log(iarr, result, new Date*1 - time)
+
+
+		if ( result == result1 ) {
+			console.log("YES")
+		} else {
+			console.log("NO")
+		}
+
+	}
+}
+
+
+
+
+</script>
+</body>
+</html>

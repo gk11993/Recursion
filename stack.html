@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		table{
+			position: absolute;
+			left: 50%;
+		}
+		table td{
+			border: 1px #eee solid;
+			text-align: center;
+		}
+		input {
+			background: #ccc;
+			border: none;
+			outline: none;
+			text-indent:1em;
+			width: 100px;
+		}
+		button {
+			background: #ddd;
+			border: none;
+			outline: none;
+		}
+	</style>
+</head>
+<body style="width: 100%; height: 100%; background: #ccc;">
+<script src="gk.js"></script>
+<script>
+let objs = []
+let ebp = 0
+let top1 = 0
+let esp = top1
+let set = gk.setView()
+
+let [topValue, topValueBun, topValueSize] = gk.dom.obj(['top:', "0028ff8c"])
+let [bottomValue, bottomValueBun, bottomValueSize] = gk.dom.obj(['buttom:', '0028ff94'])
+let [sub, subBun, subSize] = gk.dom.obj(['sub', ''])
+let [addEsp, addEspBun, addEspSize] = gk.dom.obj(['addEsp', ''])
+let [subEsp, subEspBun, subEspSize] = gk.dom.obj(['subEsp', ''])
+set.add(topValue)
+set.add(bottomValue)
+set.add(sub)
+set.add(addEsp)
+set.add(subEsp)
+
+gk(set.button, 'on', {click() {
+	top1 = to10(topValueSize.value)
+	ebp = to10(bottomValueSize.value)
+	esp = top1
+	init()
+	update()
+}})
+
+gk(subBun, 'on', {click() {
+	let sub =  to10(subSize.value)
+	let curre = top1
+	top1 -= sub
+	for (var i = curre-1; i >= top1; i--) {
+		let obj = {}
+		obj.point =  ""
+		obj.address = i.toString(16)
+		obj.data = ""
+		objs.unshift(obj)
+	}
+	update()
+}})
+gk(addEspBun, 'on', {click() {
+	let add =  to10(addEspSize.value)
+	esp += add
+	update()
+}})
+gk(subEspBun, 'on', {click() {
+	let sub =  to10(subEspSize.value)
+	esp -= sub
+	update()
+}})
+
+function init() {
+	for (var i = top1; i <= ebp; i++) {
+		let obj = {}
+		if ( i == ebp ) {
+			obj.point =  "ebp"
+		} else {
+			obj.point =  ""
+		}
+		obj.address = i.toString(16)
+		obj.data = ""
+		objs.push(obj)
+	}
+}
+function update() {
+	gk('table', 'remove')
+	gk(`<table cellspacing=0>
+			<tr>
+				<td>point</td>
+				<td>address</td>
+				<td>
+					<input type="" name="">
+				</td>
+			</tr>
+		</table>`, 'pipe', 'body')
+	for (let i = 0; i < objs.length; i++) {
+		let tr = gk('tr').dom[0].cloneNode(true)
+		
+		if ( showEsp(i) ) {
+			objs[i].point = "esp"
+		} else if ( i < objs.length-1 ) {
+			objs[i].point = ""
+		}
+
+		gk(tr, "find", "td")[0].innerHTML =  objs[i].point 
+		gk(tr, "find", "td")[1].innerHTML =  objs[i].address
+		gk(gk(tr, "find", "td")[2], 'find', 'input')[0].value =  objs[i].data
+		
+		gk(tr, "pipe", 'table')
+	}
+	
+	gk("<text>data", 'pipe', gk(gk(gk('tr').dom[0], 'find', 'input')[0], 'find'))
+	gk(gk('tr').dom[0], 'find', 'input')[0].remove()
+
+	gk("td>input").on({input() {
+		objs[this.index].data = this.value
+		console.log()
+	}})
+}
+
+function to10(str) {
+	return parseInt(str, 16)
+}
+function to16(num) {
+	return num.toString(16)
+}
+function showEsp(index) {
+	return to10(objs[index].address) == esp
+}
+for (var i = 0; i < 2; i++) {
+	gk(gk("button").dom[i], 'css', {background: "#ccc"})
+}
+</script>
+</body>
+</html>
