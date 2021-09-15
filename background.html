@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+<script src="gk.js"></script>
+<script>
+gk.gl(_=> {
+	console.log(_)
+	_.width = 500
+	_.height = 50
+	_.alignCenter  = false
+	return () => {
+		hue(0, 0, 100)
+		rect(0, 0, width, height)
+	}
+})
+</script>
+</body>
+</html>

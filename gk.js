@@ -260,7 +260,7 @@ class Make {
 			this.canvas.width = this.w
 			this.canvas.height = this.h
 			if ( this.show ) {
-				gk(this.canvas, 'css', {position: 'absolute', left: '0', top: '0', 'z-index': "1"})
+				gk(this.canvas, 'css', {position: 'absolute', left: '10', top: '10', 'z-index': "1"})
 				gk(this.canvas, 'pipe', 'body')
 			}
 			this.context = this.canvas.getContext("2d")
@@ -345,6 +345,7 @@ class Make {
 	}
 	rect(x, y, w, h) {
 		this.chunk(() => {
+			console.log(x, y, w, h)
 			this.context.fillRect(x || 0, y || 0, typeof w == 'number' ? w : this.w, typeof h == 'number' ? h : this.h)
 			if ( !this.noFill ) this.context.fill()
 			if ( !this.noStroke ) {
@@ -379,17 +380,15 @@ class Make {
 			if ( !this.noStroke ) this.context.strokeText(text, typeof x == 'number' ? x : this.w/2, typeof y == 'number' ? y : this.h/2)
 		})
 	}
-	data(path) {
+	getImg(dir) {
 		let img = new Image()
-		img.src = path || !this.webgl ? this.canvas.toDataURL("image/png") : this._.inner.gl.canvas.toDataURL("image/png")
-		if ( path  ) img.width = this.w, img.height = this.h
+		img.src = dir || (!this.webgl ? this.canvas.toDataURL("image/png") : this._.inner.gl.canvas.toDataURL("image/png"))
 		return new Promise( resolve => img.onload = () => resolve(img) )
 	}
-	getImgData(path) {
+	getImgData(imgOrDir) {
+		if ( imgOrDir instanceof HTMLElement ) return this.context.drawImage(imgOrDir, 0, 0, imgOrDir.width, imgOrDir.height), this.context.getImageData(0, 0, imgOrDir.width, imgOrDir.height)
 		let img = new Image()
-		img.src = path
-		img.width = this.w
-		img.height = this.h
+		img.src = imgOrDir
 		return new Promise( resolve => {
 			img.onload = () => {
 				this.context.drawImage(img, 0, 0, img.width, img.height)
