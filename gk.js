@@ -302,7 +302,7 @@ class Make {
 				}
 			})
 		})
-		return await self.data()
+		return await self.getImg()
 	}
 	fill(color) {
 		color == 'none' ? this.noFill = true : this.noFill = false
@@ -345,15 +345,12 @@ class Make {
 	}
 	rect(x, y, w, h) {
 		this.chunk(() => {
-			console.log(x, y, w, h)
-			this.context.fillRect(x || 0, y || 0, typeof w == 'number' ? w : this.w, typeof h == 'number' ? h : this.h)
-			if ( !this.noFill ) this.context.fill()
+			if ( !this.noFill ) this.context.fillRect(x || 0, y || 0, typeof w == 'number' ? w : this.w, typeof h == 'number' ? h : this.h)
 			if ( !this.noStroke ) {
 				this.line(x, y, x+w, y)
 				this.line(x+w, y, x+w, y+h)
 				this.line(x+w, y+h, x, y+h)
 				this.line(x, y+h, x, y)
-				this.context.stroke()
 			}
 		})
 	}
@@ -928,7 +925,7 @@ class WabglInner {
 		this.setPointSize(1)
 		let empty = gk.make(1, 1)
 		this.texture({}, false)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await empty.data())
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, await empty.getImg())
 		this.emptyTextureLoadDone = true
 	}
 	buffer() {
