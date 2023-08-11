@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+<script>
+test(1000)	
+function test(count) {
+	for (var c = 0; c < count; c++) {
+		function getNumber(len) {
+			return Math.floor(Math.random()*Math.pow(10, len))
+		}
+		let arr = [getNumber(3), getNumber(3), getNumber(3)]
+		//console.log(arr)
+
+		function calcScore(arr, current) {
+			let score = 0
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] != current ) {
+					if ( `${current}${arr[i]}` > `${arr[i]}${current}` ) {
+						score++
+					}
+				}
+			}
+			return score
+		}
+		let objectArr = []
+		for (var i = 0; i < arr.length; i++) {
+			
+			let obj = {
+				number: arr[i],
+				score: calcScore(arr, arr[i])
+			}
+			objectArr.push(obj)
+		}
+		function findMax(objectArr) {
+			let max = 0
+			let index = 0
+			let number = 0
+			for (var i = 0; i < objectArr.length; i++) {
+				if ( max <= objectArr[i].score ) {
+					max = objectArr[i].score
+					number = objectArr[i].number
+					index = i
+				}
+			}
+			//console.log(number)
+			objectArr.splice(index, 1)
+			if ( objectArr.length == 0 ) return number + ""
+			return number + findMax(objectArr)
+		}
+		//console.log(objectArr)
+		let result = findMax(objectArr)
+		//console.log(result)
+		if ( check(result) ) {
+			console.log("YES")
+		} else {
+			console.log("NO")
+		}
+		function check(number) {
+			let allArr = []
+			let itemArr = []
+
+			new (function show(index) {
+				if ( index == arr.length-1 ) return 
+				index++
+				
+				for (var i = 0; i < arr.length; i++) {
+					itemArr[index] = i
+					if (  index == arr.length-1 ) {
+						allArr.push([...itemArr])
+					}
+					show(index)
+				}
+			})(-1)
+			//console.log(allArr)
+			let newArr = []
+			for (var i = 0; i < allArr.length; i++) {
+				let itemArr = []
+				let found = false
+				for (var j = 0; j < allArr[i].length; j++) {
+					for (var n = 0; n < itemArr.length; n++) {
+						if ( itemArr[n] == allArr[i][j] ) {
+							found = true
+						}
+					}
+					if ( !found ) {
+						itemArr.push( allArr[i][j] )
+					}
+					
+				}
+				if ( !found ) {
+					newArr.push( itemArr )
+				}
+				
+			}
+			//console.log( newArr )
+			let resultArr = []
+			for (var i = 0; i < newArr.length; i++) {
+				let iremArr = []
+				for (var j = 0; j < newArr[i].length; j++) {
+					iremArr.push(arr[newArr[i][j]])
+					
+				}
+				resultArr.push(iremArr.join(""))
+				
+			}
+			return number == resultArr.sort((a, b) => b-a)[0]
+		}
+	}
+}
+</script>
+</body>
+</html>
